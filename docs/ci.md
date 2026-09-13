@@ -51,7 +51,8 @@ Repeat the build and verification commands with `x86-64-v3` on a capable CPU.
 The build script selects the returned archive directly, so stale build artifacts
 cannot accidentally enter the test through a wildcard.
 
-Ubuntu 24.04 restricts unprivileged user namespaces using AppArmor. The workflow
-installs the packaged bubblewrap/AppArmor support; it does not disable AppArmor
-or globally relax host sysctls. A namespace failure must be diagnosed from the
-build log. See [Ubuntu's explanation](https://discourse.ubuntu.com/t/understanding-apparmor-user-namespace-restriction/58007).
+Ubuntu 24.04 restricts unprivileged user namespaces using AppArmor. The runner setup script installs a root-owned CI-only bubblewrap copy and loads
+a path-specific, userns-enabled AppArmor profile for it. The initial hosted run
+showed that installing the packages alone was insufficient (RTM_NEWADDR was
+denied). This setup does not disable AppArmor or globally relax host sysctls.
+A namespace probe must pass before source downloads or builds begin. See [Ubuntu's explanation](https://discourse.ubuntu.com/t/understanding-apparmor-user-namespace-restriction/58007).

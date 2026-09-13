@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+defaults:
+  run:
+    shell: bash
 concurrency:
   group: validate-${{ github.ref }}
   cancel-in-progress: true
@@ -46,8 +49,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Prepare development build tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y bubblewrap build-essential gettext texinfo patch apparmor
+          bash ci/prepare-runner.sh
           mkdir -p out
           python3 ci/resources.py --cpu '${{ matrix.cpu }}' > out/runner.json
       - name: Build pinned GNU source and run upstream tests
