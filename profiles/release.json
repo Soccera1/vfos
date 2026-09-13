@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "status": "unqualified",
+  "boot_contract": {
+    "grub": "2.14",
+    "xfsprogs": "7.0.1",
+    "argon2id_memory_kib": 65536,
+    "argon2id_iterations": 4,
+    "argon2id_parallelism": 1
+  },
+  "required_firmware": [
+    "bios",
+    "efi32",
+    "efi64"
+  ],
+  "required_encryption": [
+    "none",
+    "pbkdf2",
+    "argon2id"
+  ],
+  "qualification": [],
+  "blockers": [
+    "Complete bootstrap and runtime recipe closures",
+    "Test pinned xfsprogs 7.0.1 against GRUB 2.14",
+    "Build and test trimmed Firefox",
+    "Implement live-root dracut module",
+    "Run 18 installation/boot cases, desktop tests and physical hardware validation"
+  ]
+}

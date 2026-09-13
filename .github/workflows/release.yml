@@ -1,0 +1,31 @@
+name: Development readiness
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      require_ready:
+        description: Fail unless the full distribution is release-ready
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  readiness:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Report source closure and qualification
+        run: python3 ci/check-release.py
+      - name: Enforce release readiness when requested
+        if: github.event_name == 'workflow_dispatch' && inputs.require_ready
+        run: python3 ci/check-release.py --require-ready
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: release-readiness
+          path: |
+            out/readiness.json
+            out/readiness.md
+          if-no-files-found: error

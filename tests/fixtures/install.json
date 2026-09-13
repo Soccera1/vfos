@@ -1,0 +1,11 @@
+{
+  "disk": {"path":"/dev/nvme0n1","size":68719476736,"logical_sector":512,"serial":"EXAMPLE-NOT-A-REAL-DISK","major_minor":"259:0","model":"Example disk"},
+  "desktop":"dwl",
+  "encryption":"argon2id",
+  "cpu":"x86-64-v3",
+  "hostname":"vfos",
+  "username":"developer",
+  "locale":"en_US.UTF-8",
+  "keyboard":"us",
+  "timezone":"Australia/Melbourne"
+}

@@ -1,0 +1,4 @@
+#!/usr/bin/python3
+import sys
+from vfos.session import run_child
+sys.exit(run_child(sys.argv[1]))

@@ -1,0 +1,15 @@
+# Candidate compile-time configuration; not release-qualified until built against
+# a pinned Firefox source with configure-option and runtime acceptance tests.
+ac_add_options --enable-application=browser
+ac_add_options --prefix=/usr
+ac_add_options --enable-optimize
+ac_add_options --disable-debug
+ac_add_options --disable-tests
+ac_add_options --disable-updater
+ac_add_options --disable-crashreporter
+ac_add_options --disable-maintenance-service
+ac_add_options --disable-default-browser-agent
+ac_add_options --enable-release
+ac_add_options --enable-strip
+# Preserve sandbox, JS/Wasm, media, extensions, devtools and security mechanisms.
+# No LTO/PGO override until measured per CPU profile.

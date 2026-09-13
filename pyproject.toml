@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vfos"
+version = "0.1.0"
+description = "Source-first VFOS distribution tooling"
+requires-python = ">=3.12"
+
+[project.scripts]
+vfos = "vfos.cli:main"
+
+[tool.setuptools]
+packages = ["vfos"]

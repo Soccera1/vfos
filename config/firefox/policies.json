@@ -1,0 +1,20 @@
+{
+  "policies": {
+    "DisableAppUpdate": true,
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "DisableFirefoxAccounts": true,
+    "DisableFeedbackCommands": true,
+    "DisableDeveloperTools": false,
+    "FirefoxHome": {"SponsoredTopSites": false, "SponsoredPocket": false, "Locked": true},
+    "FirefoxSuggest": {"WebSuggestions": false, "SponsoredSuggestions": false, "ImproveSuggest": false, "Locked": true},
+    "Preferences": {
+      "browser.ml.enable": {"Value": false, "Status": "locked"},
+      "browser.ml.chat.enabled": {"Value": false, "Status": "locked"},
+      "browser.newtabpage.activity-stream.showSponsored": {"Value": false, "Status": "locked"},
+      "browser.newtabpage.activity-stream.showSponsoredTopSites": {"Value": false, "Status": "locked"},
+      "app.shield.optoutstudies.enabled": {"Value": false, "Status": "locked"},
+      "datareporting.healthreport.uploadEnabled": {"Value": false, "Status": "locked"}
+    }
+  }
+}

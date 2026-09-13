@@ -1,0 +1,14 @@
+{
+  "base": ["linux", "glibc", "bash", "coreutils", "util-linux", "findutils", "grep", "sed", "gawk", "diffutils", "tar", "gzip", "xz", "bzip2", "zstd", "sysvinit", "eudev", "shadow", "tzdata", "kbd", "dhcpcd", "wpa-supplicant", "sysklogd", "iproute2", "ca-certificates", "linux-firmware", "intel-microcode", "amd-microcode", "xfsprogs", "cryptsetup", "grub", "efibootmgr", "dracut", "dosfstools", "dialog", "vfos-base"],
+  "developer": ["gcc", "binutils", "make", "pkgconf", "git", "python", "gdb", "strace", "vim"],
+  "shared-desktop": ["seatd", "mesa", "libinput", "pipewire", "wireplumber", "dbus", "fontconfig", "dejavu-fonts", "firefox", "vfos-session"],
+  "dwm": ["xlibre", "xf86-input-libinput", "xinit", "xauth", "dwm", "st", "dmenu"],
+  "dwl": ["wayland", "wlroots", "dwl", "foot", "dmenu-wl"],
+  "live": ["squashfs-tools", "vfos-live"],
+  "opt-in": ["xwayland", "cups", "bluez", "avahi", "openssh", "podman"],
+  "bootstrap": {
+    "cross-toolchain": ["cross-binutils", "cross-gcc", "linux-headers", "cross-glibc", "cross-libstdcxx"],
+    "temporary-userspace": ["temporary-binutils", "temporary-gcc", "temporary-bash", "temporary-coreutils", "temporary-make", "temporary-python"],
+    "native-system": ["glibc", "binutils", "gcc", "bash", "coreutils", "make", "python"]
+  }
+}

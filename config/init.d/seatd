@@ -1,0 +1,37 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          seatd
+# Required-Start:    $local_fs udev
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Shared libseat broker for XLibre and dwl
+### END INIT INFO
+set -eu
+pidfile=/run/seatd.pid
+case "${1:-}" in
+    start)
+        getent group seat >/dev/null
+        start-stop-daemon --start --quiet --background --make-pidfile \
+            --pidfile "$pidfile" --exec /usr/bin/seatd -- -u root -g seat -l error
+        n=0
+        while [ ! -S /run/seatd.sock ]; do
+            n=$((n + 1))
+            if [ "$n" -ge 50 ]; then
+                echo 'seatd did not create its socket' >&2
+                exit 1
+            fi
+            sleep 0.1
+        done
+        # seatd 0.9.1 creates 0770 for -g; tighten to the VFOS socket contract.
+        chown root:seat /run/seatd.sock
+        chmod 0660 /run/seatd.sock
+        ;;
+    stop)
+        start-stop-daemon --stop --quiet --retry TERM/5/KILL/2 --pidfile "$pidfile" --exec /usr/bin/seatd
+        rm -f "$pidfile"
+        ;;
+    restart) "$0" stop; "$0" start ;;
+    status) start-stop-daemon --status --pidfile "$pidfile" --exec /usr/bin/seatd ;;
+    *) echo "usage: $0 {start|stop|restart|status}" >&2; exit 2 ;;
+esac

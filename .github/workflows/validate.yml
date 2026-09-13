@@ -1,0 +1,88 @@
+name: Validate tooling
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Lint workflow syntax and expressions
+        env:
+          GOBIN: ${{ runner.temp }}/vfos-ci-tools
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+          "$GOBIN/actionlint" -shellcheck= .github/workflows/*.yml
+      - run: |
+          mkdir -p out
+          python3 -m compileall -q vfos
+          python3 -m unittest discover -s tests -v 2>&1 | tee out/unit-tests.log
+          ./bin/vfos validate
+          ./bin/vfos test-matrix > out/test-matrix.json
+          ./bin/vfos status > out/readiness.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: tooling-validation
+          path: out/
+          if-no-files-found: error
+  package-smoke:
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        cpu: [x86-64-v1, x86-64-v3]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Prepare development build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap build-essential gettext texinfo patch apparmor
+          mkdir -p out
+          python3 ci/resources.py --cpu '${{ matrix.cpu }}' > out/runner.json
+      - name: Build pinned GNU source and run upstream tests
+        run: |
+          /usr/bin/time -v -o out/resources.txt python3 ci/build-smoke.py --cpu '${{ matrix.cpu }}'
+          python3 ci/package-smoke.py --manifest out/smoke.json --cpu '${{ matrix.cpu }}'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: development-package-${{ matrix.cpu }}
+          path: out/
+          if-no-files-found: error
+
+  verify-download:
+    needs: package-smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cpu: [x86-64-v1, x86-64-v3]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: development-package-${{ matrix.cpu }}
+          path: downloaded
+      - name: Verify transferred package and exercise it on a fresh runner
+        run: |
+          mkdir -p out
+          python3 ci/resources.py --cpu '${{ matrix.cpu }}' > out/runner.json
+          python3 ci/package-smoke.py --manifest downloaded/smoke.json --cpu '${{ matrix.cpu }}'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: verified-package-${{ matrix.cpu }}
+          path: out/
+          if-no-files-found: error
