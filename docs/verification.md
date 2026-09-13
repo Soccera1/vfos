@@ -1,6 +1,6 @@
 # Verification performed
 
-Local validation on 2026-09-13:
+Validation on 2026-09-13:
 
 | Check | Result |
 |---|---|
@@ -23,12 +23,24 @@ function-like C23 macros. Neither compiler protections nor its upstream tests
 were disabled to get a passing build.
 
 Source archives and generated development packages/logs are under ignored
-`cache/` and `out/`. CI repeats source download verification and package tests on
-pinned Ubuntu 24.04 runners. The checkout is connected to the public
-`Soccera1/vfos` repository. Hosted Actions verification is pending the initial
-push. Local actionlint v1.7.7 validation passed; a nested Ubuntu container ran
-the unit suite but could not mount a nested `/proc` for bubblewrap. This is not
-a successful Ubuntu source-build result.
+`cache/` and `out/`. Hosted verification passed on the public
+[Soccera1/vfos repository](https://github.com/Soccera1/vfos):
+
+- [Successful development workflow](https://github.com/Soccera1/vfos/actions/runs/34732987452)
+  at commit `8b0f722`: 46 unit tests, workflow linting, both unprivileged source
+  builds, upstream tests and both fresh-runner download/install/execute/verify/
+  remove checks passed.
+- [Readiness report](https://github.com/Soccera1/vfos/actions/runs/34732987507)
+  correctly reports the remaining distribution work without blocking development.
+- Five nonempty artifacts were uploaded: tooling validation, two development
+  packages and two independent verification reports. The downloaded archives'
+  hashes were compared with the indices and verification reports; both matched.
+
+The initial hosted attempt identified an AppArmor namespace restriction. A
+path-specific userns profile for a root-owned CI-only bubblewrap copy resolved
+it; global AppArmor/sysctl settings were not disabled. Local actionlint v1.7.7
+validation also passed. An earlier nested Ubuntu container could not mount
+nested `/proc`; the actual hosted runs above establish Ubuntu runner behavior.
 
 **Not run:** kernel bootstrap, GRUB builds/boot, installer writes to disks,
 EFI32/EFI64/BIOS boots, LUKS unlock, full desktop/browser/audio/network sessions,
